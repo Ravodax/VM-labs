@@ -1,75 +1,33 @@
+//Аппроксимация функции
+
 #include <stdio.h>
 
 #define MAX 100
-#define EPS 0.000001
-#define MAX_ITER 1000
-
-double my_abs(double x) {
-    return x < 0 ? -x : x;
-}
 
 int main() {
     int n;
-    double a[MAX][MAX];
-    double b[MAX];
-    double x[MAX];
+    double x[MAX], y[MAX];
+    double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    double a, b;
 
-    printf("Введите количество неизвестных: ");
+    printf("Введите количество точек: ");
     scanf("%d", &n);
 
-    printf("Введите матрицу коэффициентов:\n");
+    printf("Введите точки x и y:\n");
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            scanf("%lf", &a[i][j]);
-        }
+        scanf("%lf %lf", &x[i], &y[i]);
+
+        sumX += x[i];
+        sumY += y[i];
+        sumXY += x[i] * y[i];
+        sumX2 += x[i] * x[i];
     }
 
-    printf("Введите свободные члены:\n");
-    for (int i = 0; i < n; i++) {
-        scanf("%lf", &b[i]);
-    }
+    a = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    b = (sumY - a * sumX) / n;
 
-    // Начальное приближение
-    for (int i = 0; i < n; i++) {
-        x[i] = 0;
-    }
-
-    int iter = 0;
-
-    while (iter < MAX_ITER) {
-        double max_diff = 0;
-
-        for (int i = 0; i < n; i++) {
-            double old_x = x[i];
-            double sum = b[i];
-
-            for (int j = 0; j < n; j++) {
-                if (j != i) {
-                    sum -= a[i][j] * x[j];
-                }
-            }
-
-            x[i] = sum / a[i][i];
-
-            double diff = my_abs(x[i] - old_x);
-            if (diff > max_diff) {
-                max_diff = diff;
-            }
-        }
-
-        iter++;
-
-        if (max_diff < EPS) {
-            break;
-        }
-    }
-
-    printf("\nРешение системы:\n");
-    for (int i = 0; i < n; i++) {
-        printf("x%d = %.6lf\n", i + 1, x[i]);
-    }
-
-    printf("Количество итераций: %d\n", iter);
+    printf("\nАппроксимирующая функция:\n");
+    printf("y = %.6lf * x + %.6lf\n", a, b);
 
     return 0;
 }
