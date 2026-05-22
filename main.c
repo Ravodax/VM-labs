@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #define MAX 100
-#define EPS 0.0001
+#define EPS 0.000001
 #define MAX_ITER 1000
 
 double my_abs(double x) {
@@ -13,7 +13,6 @@ int main() {
     double a[MAX][MAX];
     double b[MAX];
     double x[MAX];
-    double x_new[MAX];
 
     printf("Введите количество неизвестных: ");
     scanf("%d", &n);
@@ -41,6 +40,7 @@ int main() {
         double max_diff = 0;
 
         for (int i = 0; i < n; i++) {
+            double old_x = x[i];
             double sum = b[i];
 
             for (int j = 0; j < n; j++) {
@@ -49,18 +49,12 @@ int main() {
                 }
             }
 
-            x_new[i] = sum / a[i][i];
+            x[i] = sum / a[i][i];
 
-            double diff = my_abs(x_new[i] - x[i]);
-
+            double diff = my_abs(x[i] - old_x);
             if (diff > max_diff) {
                 max_diff = diff;
             }
-        }
-
-        // Обновление значений
-        for (int i = 0; i < n; i++) {
-            x[i] = x_new[i];
         }
 
         iter++;
@@ -71,7 +65,6 @@ int main() {
     }
 
     printf("\nРешение системы:\n");
-
     for (int i = 0; i < n; i++) {
         printf("x%d = %.6lf\n", i + 1, x[i]);
     }
