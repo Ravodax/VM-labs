@@ -1,75 +1,63 @@
+//Нахождение экстремумов функции методом Золотого сечения
+
 #include <stdio.h>
 
-#define MAX 100
 #define EPS 0.000001
-#define MAX_ITER 1000
 
 double my_abs(double x) {
     return x < 0 ? -x : x;
 }
 
+// Функция
+double f(double x) {
+    return x * x - 4 * x + 5;
+}
+
 int main() {
-    int n;
-    double a[MAX][MAX];
-    double b[MAX];
-    double x[MAX];
+    double a, b;
+    double x1, x2;
+    double f1, f2;
 
-    printf("Введите количество неизвестных: ");
-    scanf("%d", &n);
+    // коэффициент золотого сечения
+    double phi = 0.6180339887;
 
-    printf("Введите матрицу коэффициентов:\n");
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            scanf("%lf", &a[i][j]);
+    printf("Введите границы интервала: ");
+    scanf("%lf %lf", &a, &b);
+
+    x1 = b - phi * (b - a);
+    x2 = a + phi * (b - a);
+
+    f1 = f(x1);
+    f2 = f(x2);
+
+    while (my_abs(b - a) > EPS) {
+
+        if (f1 < f2) {
+            b = x2;
+
+            x2 = x1;
+            f2 = f1;
+
+            x1 = b - phi * (b - a);
+            f1 = f(x1);
+        }
+        else {
+            a = x1;
+
+            x1 = x2;
+            f1 = f2;
+
+            x2 = a + phi * (b - a);
+            f2 = f(x2);
         }
     }
 
-    printf("Введите свободные члены:\n");
-    for (int i = 0; i < n; i++) {
-        scanf("%lf", &b[i]);
-    }
+    double xmin = (a + b) / 2.0;
+    double ymin = f(xmin);
 
-    // Начальное приближение
-    for (int i = 0; i < n; i++) {
-        x[i] = 0;
-    }
-
-    int iter = 0;
-
-    while (iter < MAX_ITER) {
-        double max_diff = 0;
-
-        for (int i = 0; i < n; i++) {
-            double old_x = x[i];
-            double sum = b[i];
-
-            for (int j = 0; j < n; j++) {
-                if (j != i) {
-                    sum -= a[i][j] * x[j];
-                }
-            }
-
-            x[i] = sum / a[i][i];
-
-            double diff = my_abs(x[i] - old_x);
-            if (diff > max_diff) {
-                max_diff = diff;
-            }
-        }
-
-        iter++;
-
-        if (max_diff < EPS) {
-            break;
-        }
-    }
-
-    printf("\nРешение системы:\n");
-    for (int i = 0; i < n; i++) {
-        printf("x%d = %.6lf\n", i + 1, x[i]);
-    }
-
-    printf("Количество итераций: %d\n", iter);
+    printf("Минимум функции:\n");
+    printf("x = %.6lf\n", xmin);
+    printf("f(x) = %.6lf\n", ymin);
 
     return 0;
 }
